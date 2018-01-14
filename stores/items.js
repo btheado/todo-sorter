@@ -62,6 +62,7 @@ function store (state, emitter) {
       return R.pipe(
         R.adjust(R.assoc('compare', {action: 'item:mark-sorted'}), lastUnsorted),
         R.adjust(R.assoc('collapsed', false), lastUnsorted),
+        R.adjust(R.assoc('header', 'Which first?'), lastUnsorted),
         R.adjust(R.assoc('compare', {action: 'item:parent-swap'}), child1(lastUnsorted)),
         R.adjust(R.assoc('collapsed', true), child1(lastUnsorted)),
         R.when(() => child2(lastUnsorted) <= itemList.length,
@@ -90,6 +91,7 @@ function store (state, emitter) {
       emitter.emit(state.events.RENDER)
     })
     emitter.on('item:parent-swap', function (id) {
+      // TODO
     })
     emitter.on('item:mark-sorted', function (id) {
       state.item_list[id].sorted = true

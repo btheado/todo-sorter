@@ -8,6 +8,7 @@ module.exports = view
 function view (state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
+  // TODO: add 'work on X' (and done/done for now buttons) when there are no comparisons to perform
   return html`
     <body>
     <div class="treedisplay">

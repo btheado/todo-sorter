@@ -29,9 +29,10 @@ function view (item, emit) {
   if (item.compare) {
     prefix = html`<input type=checkbox onclick=${onPrefixClick}></input>`
   }
-  // TODO: header
   return html`
     <div class='node'>
+      <div class='header'><b>${item.header}</b></div>
+      <!-- TODO: alignment is off when prefix is present vs. absent -->
       <div class='prefix dib w1 tc'>${prefix}</div>
       ${prefix}
       <div class='bullet dib w1 tc pointer' onclick=${onBulletClick}>${bullet}</div>
