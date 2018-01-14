@@ -62,6 +62,7 @@ function store (state, emitter) {
       return R.pipe(
         R.adjust(R.assoc('compare', {action: 'item:mark-sorted'}), lastUnsorted),
         R.adjust(R.assoc('compare', {action: 'item:parent-swap'}), child1(lastUnsorted)),
+        R.adjust(R.assoc('collapsed', true), child1(lastUnsorted)),
         R.when(() => child2(lastUnsorted) <= itemList.length,
           R.adjust(R.assoc('compare', {action: 'item:parent-swap'}), child2(lastUnsorted)))
       )
