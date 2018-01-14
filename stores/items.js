@@ -120,5 +120,17 @@ function store (state, emitter) {
       recomputeState(state)
       emitter.emit(state.events.RENDER)
     })
+    emitter.on('item:mark-unsorted', function (id) {
+      state.item_list[id].sorted = false
+      recomputeState(state)
+      emitter.emit(state.events.RENDER)
+    })
+    emitter.on('item:mark-done', function (id) {
+      state.item_list[id] = state.item_list[state.item_list.length - 1]
+      state.item_list[id].sorted = false
+      state.item_list.splice(state.item_list.length - 1)
+      recomputeState(state)
+      emitter.emit(state.events.RENDER)
+    })
   })
 }

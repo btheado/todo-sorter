@@ -13,11 +13,12 @@ function view (state, emit) {
     workItem = html`
       <p>
       Work on '${state.work_item.title}'
+      <button onclick=${() => emit('item:mark-done', 0)}>Done</button>
+      <button onclick=${() => emit('item:mark-unsorted', 0)}>Done for now</button>
       </p>
     `
   }
 
-  // TODO: add 'work on X' (and done/done for now buttons) when there are no comparisons to perform
   return html`
     <body>
     ${workItem}
