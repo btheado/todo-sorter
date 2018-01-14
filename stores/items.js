@@ -91,14 +91,25 @@ function store (state, emitter) {
       emitter.emit(state.events.RENDER)
     })
     emitter.on('item:parent-swap', function (id) {
-      // TODO
+      // The item being promoted is now considered sorted
+      var item = state.item_list[id]
+      item.sorted = true
+
+      // The old parent is marked unsorted so it can be compared
+      // with more descendants
+      var itemParent = state.item_list[parent(id)]
+      itemParent.sorted = false
+
+      // Swap
+      state.item_list[parent(id)] = item
+      state.item_list[id] = itemParent
+
+      // Rebuild tree and re-render
+      state.item_tree_root = nestedItemBinaryTree(state.item_list)
+      emitter.emit(state.events.RENDER)
     })
     emitter.on('item:mark-sorted', function (id) {
       state.item_list[id].sorted = true
-      state.item_list[child1(id)].sorted = true
-      if (child2(id) < state.item_list.length) {
-        state.item_list[child2(id)].sorted = true
-      }
       state.item_tree_root = nestedItemBinaryTree(state.item_list)
       emitter.emit(state.events.RENDER)
     })
