@@ -25,16 +25,24 @@ function view (item, emit) {
       `
     }
   }
+  var prefix = ''
+  if (item.compare) {
+    prefix = html`<input type=checkbox onclick=${onPrefixClick}></input>`
+  }
   // TODO: header
   return html`
     <div class='node'>
-      <div class='prefix dib w1 tc'>${item.prefix}</div>
+      <div class='prefix dib w1 tc'>${prefix}</div>
+      ${prefix}
       <div class='bullet dib w1 tc pointer' onclick=${onBulletClick}>${bullet}</div>
-      <div class='headline dib'>${item.title}</div>
+      <div class='headline dib'>${item.id} - ${item.path} - ${item.title}</div>
       ${children}
     </div>
   `
   function onBulletClick () {
     emit('item:toggle-expansion', item.id)
+  }
+  function onPrefixClick () {
+    emit(item.compare.action, item.id)
   }
 }
