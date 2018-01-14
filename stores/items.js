@@ -56,26 +56,33 @@ function store (state, emitter) {
       }
     }
   }
-  function nestedItemBinaryTree (itemList) {
-    var lastUnsorted = R.pipe(R.sortBy(R.prop('path')), R.reject(item => item.sorted || isleaf(item.id, itemList)), R.last, R.prop('id'))
-    function markItemsForComparison (lastUnsorted) {
-      return R.pipe(
-        R.adjust(R.assoc('compare', {action: 'item:mark-sorted'}), lastUnsorted),
-        R.adjust(R.assoc('collapsed', false), lastUnsorted),
-        R.adjust(R.assoc('header', 'Which first?'), lastUnsorted),
-        R.adjust(R.assoc('compare', {action: 'item:parent-swap'}), child1(lastUnsorted)),
-        R.adjust(R.assoc('collapsed', true), child1(lastUnsorted)),
-        R.when(() => child2(lastUnsorted) <= itemList.length,
-          R.adjust(R.assoc('compare', {action: 'item:parent-swap'}), child2(lastUnsorted)))
-      )
-    }
-    itemList = addBinaryTreeFields(itemList)
-    console.log(lastUnsorted(itemList))
-    itemList = markItemsForComparison(lastUnsorted(itemList))(itemList)
-    return listToBinaryTree(itemList)
+  function markItemsForComparison (itemList) {
+    var lastUnsorted = R.pipe(
+      R.sortBy(R.prop('path')),
+      R.reject(item => item.sorted || isleaf(item.id, itemList)),
+      R.last,
+      R.prop('id'))(itemList)
+    return R.pipe(
+      R.adjust(R.assoc('compare', {action: 'item:mark-sorted'}), lastUnsorted),
+      R.adjust(R.assoc('collapsed', false), lastUnsorted),
+      R.adjust(R.assoc('header', 'Which first?'), lastUnsorted),
+      R.adjust(R.assoc('compare', {action: 'item:parent-swap'}), child1(lastUnsorted)),
+      R.adjust(R.assoc('collapsed', true), child1(lastUnsorted)),
+      R.when(() => child2(lastUnsorted) <= itemList.length,
+        R.adjust(R.assoc('compare', {action: 'item:parent-swap'}), child2(lastUnsorted)))
+    )
   }
-  state.item_tree_root = nestedItemBinaryTree(state.item_list)
-  console.log(state.item_tree_root)
+  function recomputeState (state) {
+    var itemList = addBinaryTreeFields(state.item_list)
+    state.item_tree_root = R.pipe(markItemsForComparison(itemList), listToBinaryTree)(itemList)
+    console.log(itemList)
+    if (R.reject(item => item.sorted || isleaf(item.id, itemList))(itemList).length === 0) {
+      state.work_item = state.item_list[0]
+    } else {
+      delete state.work_item
+    }
+  }
+  recomputeState(state)
 
   // When integrating with TW, maybe store as a hash indexed by title? Not sure that makes
   // sense. If doing that, then why not store as attributes on tiddlers instead? Because
@@ -87,7 +94,7 @@ function store (state, emitter) {
   emitter.on('DOMContentLoaded', function () {
     emitter.on('item:toggle-expansion', function (id) {
       state.item_list[id].collapsed = !state.item_list[id].collapsed
-      state.item_tree_root = nestedItemBinaryTree(state.item_list)
+      recomputeState(state)
       emitter.emit(state.events.RENDER)
     })
     emitter.on('item:parent-swap', function (id) {
@@ -105,12 +112,12 @@ function store (state, emitter) {
       state.item_list[id] = itemParent
 
       // Rebuild tree and re-render
-      state.item_tree_root = nestedItemBinaryTree(state.item_list)
+      recomputeState(state)
       emitter.emit(state.events.RENDER)
     })
     emitter.on('item:mark-sorted', function (id) {
       state.item_list[id].sorted = true
-      state.item_tree_root = nestedItemBinaryTree(state.item_list)
+      recomputeState(state)
       emitter.emit(state.events.RENDER)
     })
   })
