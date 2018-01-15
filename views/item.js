@@ -36,7 +36,8 @@ function view (item, emit) {
       <div class='prefix dib w1 tc'>${prefix}</div>
       ${prefix}
       <div class='bullet dib w1 tc pointer' onclick=${onBulletClick}>${bullet}</div>
-      <div class='headline dib'>${item.id} - ${item.path} - ${item.title}</div>
+      <div class='checkmark dib w1 tc pointer' onclick=${onCheckmarkClick}>✓</div>
+      <div class='headline dib'>${item.title}</div>
       ${children}
     </div>
   `
@@ -45,5 +46,8 @@ function view (item, emit) {
   }
   function onPrefixClick () {
     emit(item.compare.action, item.id)
+  }
+  function onCheckmarkClick () {
+    emit('item:mark-done', item.id)
   }
 }
