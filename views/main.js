@@ -23,7 +23,7 @@ function view (state, emit) {
     <body>
     ${workItem}
     <div class="treedisplay">
-      ${itemView(state.item_tree_root, emit)}
+      ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
     </div>
     <input type="text" placeholder="Enter new task here" class="w5" onkeydown=${onKeyDown}/>
     </body>
