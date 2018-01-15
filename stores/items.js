@@ -132,5 +132,10 @@ function store (state, emitter) {
       recomputeState(state)
       emitter.emit(state.events.RENDER)
     })
+    emitter.on('item:add-new', function (title) {
+      state.item_list.push({title: title})
+      recomputeState(state)
+      emitter.emit(state.events.RENDER)
+    })
   })
 }
