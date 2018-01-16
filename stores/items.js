@@ -111,6 +111,11 @@ function store (state, emitter) {
       state.item_list[parent(id)] = item
       state.item_list[id] = itemParent
 
+      // The grandparent of the original item marked unsorted
+      if (parent(id) !== 0) {
+        state.item_list[parent(parent(id))].sorted = false
+      }
+
       // Rebuild tree and re-render
       recomputeState(state)
       emitter.emit(state.events.RENDER)
@@ -126,6 +131,8 @@ function store (state, emitter) {
       emitter.emit(state.events.RENDER)
     })
     emitter.on('item:mark-done', function (id) {
+      // Move the last item of the list to where the item marked done was and
+      // relaunch the sorting for that area of the tree
       state.item_list[id] = state.item_list[state.item_list.length - 1]
       state.item_list[id].sorted = false
       state.item_list.splice(state.item_list.length - 1)
@@ -134,6 +141,11 @@ function store (state, emitter) {
     })
     emitter.on('item:add-new', function (title) {
       state.item_list.push({title: title})
+
+      // Adding a new item forces sorting choice with parent
+      if (state.item_list.length > 1) {
+        state.item_list[parent(state.item_list.length - 1)].sorted = false
+      }
       recomputeState(state)
       emitter.emit(state.events.RENDER)
     })
