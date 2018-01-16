@@ -18,5 +18,5 @@ app.use(store)
 app.route('/', require('./views/main'))
 app.route('/*', require('./views/404'))
 
-if (!module.parent) app.mount('body')
+if (!module.parent) app.mount('div')
 else module.exports = app

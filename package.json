@@ -4,14 +4,19 @@
   "private": true,
   "scripts": {
     "build": "bankai build index.js",
+    "build:standalone": "browserify --standalone=choodo-sorter index-embeddable.js > choodo-sorter.js",
     "create": "choo-scaffold",
     "inspect": "bankai inspect index.js",
     "start": "bankai start index.js",
     "test": "standard && npm run test-deps",
     "test-deps": "dependency-check . && dependency-check . --extra --no-dev -i tachyons"
   },
+  "browserify": {
+     "transform": ["yo-yoify", "babelify", "sheetify"]
+   },
   "dependencies": {
     "choo": "^6.6.1",
+    "choo-detached": "^1.0.0",
     "choo-devtools": "^2.3.0",
     "ramda": "^0.25.0",
     "sheetify": "^6.2.0",

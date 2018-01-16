@@ -20,13 +20,13 @@ function view (state, emit) {
   }
 
   return html`
-    <body>
+    <div>
     ${workItem}
     <div class="treedisplay">
       ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
     </div>
     <input type="text" placeholder="Enter new task here" class="w5" onkeydown=${onKeyDown}/>
-    </body>
+    </div>
   `
   function onKeyDown (e) {
     if (e.key === 'Enter' && e.target.value !== '') {
