@@ -131,6 +131,11 @@ function store (state, emitter) {
       emitter.emit(state.events.RENDER)
     })
     emitter.on('item:mark-done', function (id) {
+      if (!state.deleted_list) {
+        state.deleted_list = []
+      }
+      state.deleted_list.push(state.item_list[id])
+
       // Move the last item of the list to where the item marked done was and
       // relaunch the sorting for that area of the tree
       state.item_list[id] = state.item_list[state.item_list.length - 1]
