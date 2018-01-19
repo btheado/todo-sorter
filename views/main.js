@@ -19,6 +19,10 @@ function view (state, emit) {
     `
   }
 
+  var exportLink = html`
+    <a download='state.json' href=${'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state))}>Export data</a>
+  `
+
   return html`
     <div>
     ${workItem}
@@ -26,6 +30,7 @@ function view (state, emit) {
       ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
     </div>
     <input type="text" placeholder="Enter new task here" class="w5" onkeydown=${onKeyDown}/>
+		${exportLink}
     </div>
   `
   function onKeyDown (e) {
