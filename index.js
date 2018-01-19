@@ -1,5 +1,6 @@
 var css = require('sheetify')
 var choo = require('choo')
+var persist = require('choo-persist')
 var store = require('./stores/items')
 
 css('tachyons')
@@ -14,6 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use(store)
+app.use(persist())
 
 app.route('/', require('./views/main'))
 app.route('/*', require('./views/404'))

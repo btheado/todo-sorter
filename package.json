@@ -12,12 +12,17 @@
     "test-deps": "dependency-check . && dependency-check . --extra --no-dev -i tachyons"
   },
   "browserify": {
-     "transform": ["yo-yoify", "babelify", "sheetify"]
-   },
+    "transform": [
+      "yo-yoify",
+      "babelify",
+      "sheetify"
+    ]
+  },
   "dependencies": {
     "choo": "^6.6.1",
     "choo-detached": "^1.0.0",
     "choo-devtools": "^2.3.0",
+    "choo-persist": "^3.0.2",
     "ramda": "^0.25.0",
     "sheetify": "^6.2.0",
     "tachyons": "^4.9.0"
