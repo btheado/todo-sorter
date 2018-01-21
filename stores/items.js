@@ -2,28 +2,9 @@ const R = require('ramda')
 module.exports = store
 
 function store (state, emitter) {
-  /*
-  state.item_tree_root = {
-    title: 'root',
-    id: 0,
-    children: [
-      {title: 'child1', id: 1, prefix: 'h'},
-      {title: 'child2', id: 2, collapsed: true, children: [{title: 'child2.1', id: 3}, {title: 'child2.2', id: 4}]},
-      {title: 'child3', id: 5, children: [{title: 'child3.1', id: 6}, {title: 'child3.2', id: 7}]}
-    ]
+  if (!state.hasOwnProperty('item_list')) {
+    state.item_list = []
   }
-  */
-  state.item_list = [
-      {title: 'root'},
-      {title: 'child1'},
-      {title: 'child2'},
-      {title: 'child1.1'},
-      {title: 'child1.2'},
-      {title: 'child2.1'},
-      {title: 'child2.2'},
-      {title: 'child1.1.1'}
-  ]
-  console.log(JSON.stringify(state.item_list[0]))
 
   var child1 = idx => idx * 2 + 1
   var child2 = idx => idx * 2 + 2
@@ -154,5 +135,9 @@ function store (state, emitter) {
       recomputeState(state)
       emitter.emit(state.events.RENDER)
     })
+  })
+  emitter.on('state-changed', function (title) {
+    recomputeState(state)
+    emitter.emit(state.events.RENDER)
   })
 }
