@@ -65,18 +65,10 @@ function store (state, emitter) {
   }
   recomputeState(state)
 
-  // When integrating with TW, maybe store as a hash indexed by title? Not sure that makes
-  // sense. If doing that, then why not store as attributes on tiddlers instead? Because
-  // otherwise I would have to find a way to sync the two lists.
-
-  // Events:
-  // Toggle expansion
-  // select for sort (prefix click)
   emitter.on('DOMContentLoaded', function () {
     emitter.on('item:toggle-expansion', function (id) {
       state.item_list[id].collapsed = !state.item_list[id].collapsed
-      recomputeState(state)
-      emitter.emit(state.events.RENDER)
+      emitter.emit('state-changed')
     })
     emitter.on('item:parent-swap', function (id) {
       // The item being promoted is now considered sorted
@@ -98,18 +90,15 @@ function store (state, emitter) {
       }
 
       // Rebuild tree and re-render
-      recomputeState(state)
-      emitter.emit(state.events.RENDER)
+      emitter.emit('state-changed')
     })
     emitter.on('item:mark-sorted', function (id) {
       state.item_list[id].sorted = true
-      recomputeState(state)
-      emitter.emit(state.events.RENDER)
+      emitter.emit('state-changed')
     })
     emitter.on('item:mark-unsorted', function (id) {
       state.item_list[id].sorted = false
-      recomputeState(state)
-      emitter.emit(state.events.RENDER)
+      emitter.emit('state-changed')
     })
     emitter.on('item:mark-done', function (id) {
       if (!state.deleted_list) {
@@ -122,8 +111,7 @@ function store (state, emitter) {
       state.item_list[id] = state.item_list[state.item_list.length - 1]
       state.item_list[id].sorted = false
       state.item_list.splice(state.item_list.length - 1)
-      recomputeState(state)
-      emitter.emit(state.events.RENDER)
+      emitter.emit('state-changed')
     })
     emitter.on('item:add-new', function (title) {
       state.item_list.push({title: title})
@@ -132,8 +120,7 @@ function store (state, emitter) {
       if (state.item_list.length > 1) {
         state.item_list[parent(state.item_list.length - 1)].sorted = false
       }
-      recomputeState(state)
-      emitter.emit(state.events.RENDER)
+      emitter.emit('state-changed')
     })
   })
   emitter.on('state-changed', function (title) {

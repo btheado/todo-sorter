@@ -30,7 +30,7 @@ function view (state, emit) {
       ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
     </div>
     <input type="text" placeholder="Enter new task here" class="w5" onkeydown=${onKeyDown}/>
-		${exportLink}
+    ${exportLink}
     </div>
   `
   function onKeyDown (e) {
