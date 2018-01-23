@@ -1,10 +1,10 @@
 {
-  "name": "choodo-sorter",
+  "name": "todo-sorter",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "bankai build index.js",
-    "build:standalone": "browserify --standalone=choodo-sorter index-embeddable.js > choodo-sorter.js",
+    "build:standalone": "browserify --standalone=todo-sorter embedded.js > todo-sorter.js",
     "create": "choo-scaffold",
     "inspect": "bankai inspect index.js",
     "start": "bankai start index.js",
