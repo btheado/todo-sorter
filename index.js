@@ -20,5 +20,7 @@ app.use(persist())
 app.route('/', require('./views/main'))
 app.route('/*', require('./views/404'))
 
-if (!module.parent) app.mount('div')
-else module.exports = app
+if (!module.parent) {
+  document.body.appendChild(document.createElement('div'))
+  app.mount('div')
+} else module.exports = app
