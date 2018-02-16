@@ -26,9 +26,7 @@ function view (item, emit) {
   return html`
     <div class='node'>
       <div class='header'><b>${item.header}</b></div>
-      <!-- TODO: alignment is off when prefix is present vs. absent -->
       <div class='prefix dib w1 tc'>${prefix}</div>
-      ${prefix}
       <div class='bullet dib w1 tc pointer' onclick=${onBulletClick}>${bullet}</div>
       <div class='checkmark dib w1 tc pointer' onclick=${onCheckmarkClick}>✓</div>
       <div class='headline dib'>${item.title}</div>
