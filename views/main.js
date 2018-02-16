@@ -26,8 +26,11 @@ function view (state, emit) {
   return html`
     <div>
     ${workItem}
-    <div class="treedisplay">
+    <div class="treedisplay ma1 outline">
       ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
+    </div>
+    <div class="backlogdisplay">
+      ${state.backlog_list ? state.backlog_list.map(item => itemView(item, emit)) : ''}
     </div>
     <input type="text" placeholder="Enter new task here" class="w5" onkeydown=${onKeyDown}/>
     ${exportLink}

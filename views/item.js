@@ -19,6 +19,10 @@ function view (item, emit) {
       `
     }
   }
+  var arrow = item.arrow === 'up' ? '↑' : (item.arrow === 'down' ? '↓' : '')
+  if (arrow) {
+    arrow = html`<div class='arrow dib w1 tc pointer' onclick=${onArrowClick}>${arrow}</div>`
+  }
   var prefix = ''
   if (item.compare) {
     prefix = html`<input type=checkbox onclick=${onPrefixClick}></input>`
@@ -29,6 +33,7 @@ function view (item, emit) {
       <div class='prefix dib w1 tc'>${prefix}</div>
       <div class='bullet dib w1 tc pointer' onclick=${onBulletClick}>${bullet}</div>
       <div class='checkmark dib w1 tc pointer' onclick=${onCheckmarkClick}>✓</div>
+      ${arrow}
       <div class='headline dib'>${item.title}</div>
       ${children}
     </div>
@@ -41,5 +46,12 @@ function view (item, emit) {
   }
   function onCheckmarkClick () {
     emit('item:mark-done', item.id)
+  }
+  function onArrowClick () {
+    if (item.arrow === 'up') {
+      emit('item:to-top', item.id)
+    } else {
+      emit('item:to-bottom', item.id)
+    }
   }
 }

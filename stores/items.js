@@ -5,6 +5,9 @@ function store (state, emitter) {
   if (!state.hasOwnProperty('item_list')) {
     state.item_list = []
   }
+  if (!state.hasOwnProperty('max_tree_size')) {
+    state.max_tree_size = 7
+  }
 
   var child1 = idx => idx * 2 + 1
   var child2 = idx => idx * 2 + 2
@@ -21,7 +24,6 @@ function store (state, emitter) {
     parent: parent(idx),
     path: path(idx)
   }, item))
-  state.R = R
 
   function listToBinaryTree (list, idx = 0) {
     if (idx < list.length) {
@@ -54,10 +56,17 @@ function store (state, emitter) {
     )
   }
   function recomputeState (state) {
-    var itemList = addBinaryTreeFields(state.item_list)
-    state.item_tree_root = R.pipe(markItemsForComparison(itemList), listToBinaryTree)(itemList)
-    console.log(itemList)
-    if (R.reject(item => item.sorted || isleaf(item.id, itemList))(itemList).length === 0) {
+    var itemLists = R.pipe(
+      addBinaryTreeFields,
+      R.splitAt(state.max_tree_size),
+      R.zipWith(R.map, [
+        R.assoc('arrow', 'down'),
+        R.assoc('arrow', 'up')
+      ]))(state.item_list)
+    state.item_tree_root = R.pipe(markItemsForComparison(itemLists[0]), listToBinaryTree)(itemLists[0])
+    state.backlog_list = itemLists[1]
+    console.log(itemLists[0])
+    if (R.reject(item => item.sorted || isleaf(item.id, itemLists[0]))(itemLists[0]).length === 0) {
       state.work_item = state.item_list[0]
     } else {
       delete state.work_item
@@ -104,13 +113,10 @@ function store (state, emitter) {
       if (!state.deleted_list) {
         state.deleted_list = []
       }
-      state.deleted_list.push(state.item_list[id])
-
-      // Move the last item of the list to where the item marked done was and
-      // relaunch the sorting for that area of the tree
-      state.item_list[id] = state.item_list[state.item_list.length - 1]
-      state.item_list[id].sorted = false
-      state.item_list.splice(state.item_list.length - 1)
+      state.deleted_list.push(state.item_list.splice(id, 1)[0])
+      if (id < state.item_list.length) {
+        state.item_list[id].sorted = false
+      }
       emitter.emit('state-changed')
     })
     emitter.on('item:add-new', function (title) {
@@ -120,6 +126,18 @@ function store (state, emitter) {
       if (state.item_list.length > 1) {
         state.item_list[parent(state.item_list.length - 1)].sorted = false
       }
+      emitter.emit('state-changed')
+    })
+    emitter.on('item:to-top', function (id) {
+      var item = state.item_list.splice(id, 1)[0]
+      item.sorted = false
+      state.item_list.splice(0, 0, item)
+      emitter.emit('state-changed')
+    })
+    emitter.on('item:to-bottom', function (id) {
+      state.item_list[state.max_tree_size].sorted = false
+      var item = state.item_list.splice(id, 1)[0]
+      state.item_list.push(item)
       emitter.emit('state-changed')
     })
   })
