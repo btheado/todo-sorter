@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "choo": "^6.6.1",
-    "choo-detached": "^1.0.0",
+    "choo-detached": "^1.0.1",
     "choo-devtools": "^2.3.0",
     "choo-persist": "^3.0.2",
     "ramda": "^0.25.0",

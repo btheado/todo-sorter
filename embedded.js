@@ -6,7 +6,7 @@ css('tachyons')
 
 module.exports = () => {
   var app = choo()
-  // app.use(require('choo-devtools')()) // https://github.com/graforlock/choo-detached/issues/1
+  app.use(require('choo-devtools')())
 
   app.use(store)
   app.component(require('./views/main'))
