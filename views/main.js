@@ -23,11 +23,23 @@ function view (state, emit) {
     <a download='state.json' href=${'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state))}>Export data</a>
   `
 
+  function changeMaxTreeSize (maxTreeSize, totalItemCount) {
+    var hideShrink = (maxTreeSize > 3 && totalItemCount > 3) ? '' : 'visibility:hidden'
+    var hideGrow = (totalItemCount > maxTreeSize) ? '' : 'visibility:hidden'
+    return html`
+      <div class='pl1'>
+        <div class='dib tc pointer' style=${hideShrink} onclick=${onShrinkClick}>↑</div>
+        <div class='dib tc pointer' style=${hideGrow} onclick=${onGrowClick}>↓</div>
+      </div>
+    `
+  }
+
   return html`
     <div>
     ${workItem}
     <div class="treedisplay ma1 outline">
       ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
+      ${changeMaxTreeSize(state.max_tree_size, state.item_list.length)}
     </div>
     <div class="backlogdisplay">
       ${state.backlog_list ? state.backlog_list.map(item => itemView(item, emit)) : ''}
@@ -40,5 +52,11 @@ function view (state, emit) {
     if (e.key === 'Enter' && e.target.value !== '') {
       emit('item:add-new', e.target.value)
     }
+  }
+  function onShrinkClick () {
+    emit('decrease-tree-size')
+  }
+  function onGrowClick () {
+    emit('increase-tree-size')
   }
 }
