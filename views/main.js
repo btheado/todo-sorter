@@ -30,6 +30,7 @@ function view (state, emit) {
       <div class='pl1'>
         <div class='dib tc pointer' style=${hideShrink} onclick=${onShrinkClick}>↑</div>
         <div class='dib tc pointer' style=${hideGrow} onclick=${onGrowClick}>↓</div>
+        <a class='ml1' onclick=${onResortClick} href="">re-sort all</a>
       </div>
     `
   }
@@ -58,5 +59,9 @@ function view (state, emit) {
   }
   function onGrowClick () {
     emit('increase-tree-size')
+  }
+  function onResortClick () {
+    emit('mark-all-unsorted')
+    return false
   }
 }

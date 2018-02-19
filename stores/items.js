@@ -109,6 +109,10 @@ function store (state, emitter) {
       state.item_list[id].sorted = false
       emitter.emit('state-changed')
     })
+    emitter.on('mark-all-unsorted', function () {
+      state.item_list.forEach((item) => delete item.sorted)
+      emitter.emit('state-changed')
+    })
     emitter.on('item:mark-done', function (id) {
       if (!state.deleted_list) {
         state.deleted_list = []
