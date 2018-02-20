@@ -26,11 +26,12 @@ function view (state, emit) {
   function changeMaxTreeSize (maxTreeSize, totalItemCount) {
     var hideShrink = (maxTreeSize > 3 && totalItemCount > 3) ? '' : 'visibility:hidden'
     var hideGrow = (totalItemCount > maxTreeSize) ? '' : 'visibility:hidden'
+    var resort = (totalItemCount > 1) ? 're-sort' : ''
     return html`
       <div class='pl1'>
         <div class='dib tc pointer' style=${hideShrink} onclick=${onShrinkClick}>↑</div>
         <div class='dib tc pointer' style=${hideGrow} onclick=${onGrowClick}>↓</div>
-        <a class='ml1' onclick=${onResortClick} href="">re-sort all</a>
+        <a class='ml1' onclick=${onResortClick} href="">${resort}</a>
       </div>
     `
   }
