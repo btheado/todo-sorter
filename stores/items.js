@@ -59,13 +59,13 @@ function store (state, emitter) {
     var itemLists = R.pipe(
       addBinaryTreeFields,
       R.splitAt(state.max_tree_size),
-      R.zipWith(R.map, [
-        R.assoc('arrow', 'down'),
-        R.assoc('arrow', 'up')
-      ]))(state.item_list)
+      R.when(R.pipe(R.last, R.isEmpty, R.not),
+        R.zipWith(R.map, [
+          R.assoc('arrow', 'down'),
+          R.assoc('arrow', 'up')
+        ])))(state.item_list)
     state.item_tree_root = R.pipe(markItemsForComparison(itemLists[0]), listToBinaryTree)(itemLists[0])
     state.backlog_list = itemLists[1]
-    console.log(itemLists[0])
     if (R.reject(item => item.sorted || isleaf(item.id, itemLists[0]))(itemLists[0]).length === 0) {
       state.work_item = state.item_list[0]
     } else {
