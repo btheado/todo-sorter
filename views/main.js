@@ -43,11 +43,11 @@ function view (state, emit) {
       ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
       ${changeMaxTreeSize(state.max_tree_size, state.item_list.length)}
     </div>
+    <input type="text" placeholder="Enter new task here" class="w5" onkeydown=${onKeyDown}/>
+    ${exportLink}
     <div class="backlogdisplay">
       ${state.backlog_list ? state.backlog_list.map(item => itemView(item, emit)) : ''}
     </div>
-    <input type="text" placeholder="Enter new task here" class="w5" onkeydown=${onKeyDown}/>
-    ${exportLink}
     </div>
   `
   function onKeyDown (e) {

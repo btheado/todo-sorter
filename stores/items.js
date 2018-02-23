@@ -124,7 +124,7 @@ function store (state, emitter) {
       emitter.emit('state-changed')
     })
     emitter.on('item:add-new', function (title) {
-      state.item_list.push({title: title})
+      state.item_list.splice(Math.min(state.max_tree_size, state.item_list.length), 0, {title: title})
 
       // Adding a new item forces sorting choice with parent
       if (state.item_list.length > 1) {
