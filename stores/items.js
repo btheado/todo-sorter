@@ -66,7 +66,8 @@ function store (state, emitter) {
         ])))(state.item_list)
     state.item_tree_root = R.pipe(markItemsForComparison(itemLists[0]), listToBinaryTree)(itemLists[0])
     state.backlog_list = itemLists[1]
-    if (R.reject(item => item.sorted || isleaf(item.id, itemLists[0]))(itemLists[0]).length === 0) {
+    state.any_sorted = R.any(item => item.sorted && !isleaf(item.id, itemLists[0]))(itemLists[0])
+    if (R.all(item => item.sorted || isleaf(item.id, itemLists[0]))(itemLists[0])) {
       state.work_item = state.item_list[0]
     } else {
       delete state.work_item
