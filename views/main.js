@@ -29,8 +29,8 @@ function view (state, emit) {
     var resort = (totalItemCount > 1) && anyItemsSorted ? 're-sort' : ''
     return html`
       <div class='pl1'>
-        <div class='dib tc pointer' style=${hideShrink} onclick=${onShrinkClick}>↑</div>
-        <div class='dib tc pointer' style=${hideGrow} onclick=${onGrowClick}>↓</div>
+        <div class='dib tc pointer' title='reduce tree size' style=${hideShrink} onclick=${onShrinkClick}>↑</div>
+        <div class='dib tc pointer' title='grow tree size' style=${hideGrow} onclick=${onGrowClick}>↓</div>
         <a class='ml1' onclick=${onResortClick} href="">${resort}</a>
       </div>
     `
