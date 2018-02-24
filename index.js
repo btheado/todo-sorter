@@ -14,8 +14,17 @@ if (process.env.NODE_ENV !== 'production') {
   // app.use(require('choo-service-worker')())
 }
 
+app.use(persist({
+  // These are the only fields which need to be saved, the rest are either
+  // for temporary data or recomputed/derived from these fields
+  filter: (state) => {
+    return {
+      item_list: state.item_list,
+      deleted_list: state.deleted_list,
+      max_tree_size: state.max_tree_size
+    }
+  }}))
 app.use(store)
-app.use(persist())
 
 app.route('/', require('./views/main'))
 app.route('/*', require('./views/404'))
