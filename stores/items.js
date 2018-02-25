@@ -56,18 +56,17 @@ function store (state, emitter) {
     )
   }
   function recomputeState (state) {
-    var itemLists = R.pipe(
-      addBinaryTreeFields,
-      R.splitAt(state.max_tree_size),
-      R.when(R.pipe(R.last, R.isEmpty, R.not),
-        R.zipWith(R.map, [
-          R.assoc('arrow', 'down'),
-          R.assoc('arrow', 'up')
-        ])))(state.item_list)
-    state.item_tree_root = R.pipe(markItemsForComparison(itemLists[0]), listToBinaryTree)(itemLists[0])
-    state.backlog_list = itemLists[1]
-    state.any_sorted = R.any(item => item.sorted && !isleaf(item.id, itemLists[0]))(itemLists[0])
-    if (R.all(item => item.sorted || isleaf(item.id, itemLists[0]))(itemLists[0])) {
+    var sortTreeList = R.pipe(
+      R.take(state.max_tree_size),
+      addBinaryTreeFields
+    )(state.item_list)
+    state.item_tree_root = R.pipe(
+      R.map(R.assoc('arrow', 'down')),
+      markItemsForComparison(sortTreeList),
+      listToBinaryTree)(sortTreeList)
+    state.backlog_list = R.addIndex(R.map)((item, idx) => Object.assign({id: idx, arrow: 'up'}, item))(state.item_list)
+    state.any_sorted = R.any(item => item.sorted && !isleaf(item.id, sortTreeList))(sortTreeList)
+    if (R.all(item => item.sorted || isleaf(item.id, sortTreeList))(sortTreeList)) {
       state.work_item = state.item_list[0]
     } else {
       delete state.work_item
@@ -125,12 +124,7 @@ function store (state, emitter) {
       emitter.emit('state-changed')
     })
     emitter.on('item:add-new', function (title) {
-      state.item_list.splice(Math.min(state.max_tree_size, state.item_list.length), 0, {title: title})
-
-      // Adding a new item forces sorting choice with parent
-      if (state.item_list.length > 1) {
-        state.item_list[parent(state.item_list.length - 1)].sorted = false
-      }
+      state.item_list.splice(0, 0, {title: title, sorted: false})
       emitter.emit('state-changed')
     })
     emitter.on('item:to-top', function (id) {
