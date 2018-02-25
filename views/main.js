@@ -24,7 +24,7 @@ function view (state, emit) {
   `
 
   function changeMaxTreeSize (maxTreeSize, totalItemCount, anyItemsSorted) {
-    var hideShrink = (maxTreeSize > 3 && totalItemCount > 3) ? '' : 'visibility:hidden'
+    var hideShrink = (maxTreeSize > 0 && totalItemCount > 0) ? '' : 'visibility:hidden'
     var hideGrow = (totalItemCount > maxTreeSize) ? '' : 'visibility:hidden'
     var resort = (totalItemCount > 1) && anyItemsSorted ? 're-sort' : ''
     return html`
@@ -38,10 +38,9 @@ function view (state, emit) {
 
   return html`
     <div>
-    ${workItem}
-    <div class="treedisplay ma1 outline">
-      ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
+    <div class="treedisplay ma1">
       ${changeMaxTreeSize(state.max_tree_size, state.item_list.length, state.any_sorted)}
+      ${state.item_tree_root ? itemView(state.item_tree_root, emit) : ''}
     </div>
     <input type="text" placeholder="Enter new task here" class="w5" onkeydown=${onKeyDown}/>
     ${exportLink}

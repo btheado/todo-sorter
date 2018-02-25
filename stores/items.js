@@ -148,6 +148,11 @@ function store (state, emitter) {
     emitter.on('increase-tree-size', function () {
       // Increase maximum tree size to one level deeper (i.e. one power of two higher)
       state.max_tree_size = Math.pow(2, Math.floor(Math.log2(state.max_tree_size + 1)) + 1) - 1
+
+      // Tree size of 1 is not helpful, so skip up to 3
+      if (state.max_tree_size === 1) {
+        state.max_tree_size = 3
+      }
       emitter.emit('state-changed')
     })
     emitter.on('decrease-tree-size', function () {
@@ -156,9 +161,13 @@ function store (state, emitter) {
       // in the tree to shrink. So if the max tree size is 127, but there are only 10 items,
       // then shrink max tree size down to 7, instead of 63.
       state.max_tree_size = Math.min(
-        Math.max(3, Math.pow(2, Math.ceil(Math.log2(state.max_tree_size + 1)) - 1) - 1),
-        Math.max(3, Math.pow(2, Math.ceil(Math.log2(state.item_list.length + 1)) - 1) - 1))
-      console.log('hi')
+        Math.pow(2, Math.ceil(Math.log2(state.max_tree_size + 1)) - 1) - 1,
+        Math.pow(2, Math.ceil(Math.log2(state.item_list.length + 1)) - 1) - 1)
+
+      // Tree size of 1 is not helpful, so skip down to zero
+      if (state.max_tree_size <= 1) {
+        state.max_tree_size = 0
+      }
       emitter.emit('state-changed')
     })
   })
