@@ -53,24 +53,28 @@ function store (state, emitter) {
       R.adjust(R.assoc('collapsed', true), child1(lastUnsorted)),
       R.when(() => child2(lastUnsorted) <= itemList.length,
         R.adjust(R.assoc('compare', {action: 'item:parent-swap'}), child2(lastUnsorted)))
-    )
+    )(itemList)
+  }
+  var backlogList = R.addIndex(R.map)((item, idx) => Object.assign({id: idx, arrow: 'up'}, item))
+  var anyItemsSorted = (sortTreeList) => R.any(item => item.sorted && !isleaf(item.id, sortTreeList))(sortTreeList)
+  var allSorted = (sortTreeList) => R.all(item => item.sorted || isleaf(item.id, sortTreeList))(sortTreeList)
+  function computeDerivedFields (maxTreeSize, itemList) {
+    return R.converge(R.merge, [
+      R.pipe(
+        R.take(maxTreeSize),
+        addBinaryTreeFields,
+        R.map(R.assoc('arrow', 'down')),
+        markItemsForComparison,
+        R.converge(R.unapply(R.zipObj(['item_tree_root', 'any_sorted', 'work_item'])), [
+          listToBinaryTree,
+          anyItemsSorted,
+          R.ifElse(allSorted, R.head, () => null)
+        ])),
+      R.pipe(backlogList, R.objOf('backlog_list'))
+    ])(itemList)
   }
   function recomputeState (state) {
-    var sortTreeList = R.pipe(
-      R.take(state.max_tree_size),
-      addBinaryTreeFields
-    )(state.item_list)
-    state.item_tree_root = R.pipe(
-      R.map(R.assoc('arrow', 'down')),
-      markItemsForComparison(sortTreeList),
-      listToBinaryTree)(sortTreeList)
-    state.backlog_list = R.addIndex(R.map)((item, idx) => Object.assign({id: idx, arrow: 'up'}, item))(state.item_list)
-    state.any_sorted = R.any(item => item.sorted && !isleaf(item.id, sortTreeList))(sortTreeList)
-    if (R.all(item => item.sorted || isleaf(item.id, sortTreeList))(sortTreeList)) {
-      state.work_item = state.item_list[0]
-    } else {
-      delete state.work_item
-    }
+    return Object.assign(state, computeDerivedFields(state.max_tree_size, state.item_list))
   }
   recomputeState(state)
 
